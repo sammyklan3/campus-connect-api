@@ -20,7 +20,7 @@ export const registerUser = async ({
         course,
         yearOfStudy,
     };
-    
+
     for (const [key, value] of Object.entries(requiredFields)) {
         if (!value) {
             throw new Error(`${key} is required`);
