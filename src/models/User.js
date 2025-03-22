@@ -13,6 +13,8 @@ const User = sequelize.define("User", {
     campus: { type: DataTypes.STRING, allowNull: false },
     course: { type: DataTypes.STRING, allowNull: false },
     yearOfStudy: { type: DataTypes.INTEGER, allowNull: false },
+    profilePic: { type: DataTypes.STRING, allowNull: true },
+    bio: { type: DataTypes.STRING, allowNull: true },
 });
 
 export default User;

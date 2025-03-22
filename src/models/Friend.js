@@ -1,24 +1,26 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 
-const Message = sequelize.define("Message", {
+const Friend = sequelize.define("Friend", {
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    senderId: {
+    userId: {
         type: DataTypes.UUID,
         allowNull: false,
         references: { model: "Users", key: "id" },
     },
-    receiverId: {
+    friendId: {
         type: DataTypes.UUID,
         allowNull: false,
         references: { model: "Users", key: "id" },
     },
-    content: { type: DataTypes.TEXT, allowNull: false },
-    seen: { type: DataTypes.BOOLEAN, defaultValue: false },
+    status: {
+        type: DataTypes.ENUM("pending", "accepted", "rejected"),
+        defaultValue: "pending",
+    },
 });
 
-export default Message;
+export default Friend;
