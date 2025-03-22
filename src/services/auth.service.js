@@ -77,3 +77,10 @@ export const loginUser = async ({ email, password }) => {
         expiresIn: "1h",
     });
 };
+
+// Get user details by id 
+export const getUserById = async (id) => {
+    return await User.findByPk(id, {
+        attributes: { exclude: ["password"] },
+    });
+};
