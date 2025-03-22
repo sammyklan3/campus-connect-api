@@ -6,6 +6,7 @@ import {
     getMembers,
     removeMember,
     getMessages,
+    postMessage,
 } from "../services/group.service.js";
 
 // Create group
@@ -73,6 +74,16 @@ export const getMessagesInGroup = async (req, res) => {
     try {
         const messages = await getMessages(req.params.groupId, req.user.id);
         res.status(200).json({ messages });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Post a message in a group
+export const postMessageInGroup = async (req, res) => {
+    try {
+        await postMessage(req.params.groupId, req.user.id, req.body.content);
+        res.status(200).json({ message: "Message posted" });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

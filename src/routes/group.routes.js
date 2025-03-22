@@ -7,6 +7,7 @@ import {
     getMembersOfGroup,
     removeMemberFromGroup,
     getMessagesInGroup,
+    postMessageInGroup,
 } from "../controllers/groups.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 
@@ -17,6 +18,7 @@ router.post("/", authMiddleware, create);
 router.post("/:groupId/members", authMiddleware, addMemberToGroup);
 router.get("/:groupId/members", authMiddleware, getMembersOfGroup);
 router.get("/:groupId/messages", authMiddleware, getMessagesInGroup);
+router.post("/:groupId/messages", authMiddleware, postMessageInGroup);
 router.delete(
     "/:groupId/members/:userId",
     authMiddleware,

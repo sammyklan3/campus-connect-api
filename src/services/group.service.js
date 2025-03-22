@@ -189,12 +189,17 @@ export const getMessages = async (groupId, userId) => {
             throw new Error("Group not found");
         }
 
-        // Check if the user is a member of the group
-        const member = await GroupMember.findOne({ where: { groupId, userId } });
-        if (!member) {
+        // Check if the user is a member OR the creator of the group
+        const isMember = await GroupMember.findOne({
+            where: { groupId, userId },
+        });
+        const isCreator = group.createdBy === userId;
+
+        if (!isMember && !isCreator) {
             throw new Error("You are not a member of the group");
         }
-        
+
+        // Fetch messages
         return await GroupMessage.findAll({
             where: { groupId },
             include: [
@@ -211,5 +216,42 @@ export const getMessages = async (groupId, userId) => {
         });
     } catch (error) {
         throw new Error(`Failed to get messages: ${error.message}`);
+    }
+};
+
+// Post message
+export const postMessage = async (groupId, userId, content) => {
+    const requiredFields = { groupId, content };
+
+    for (const [key, value] of Object.entries(requiredFields)) {
+        if (!value) {
+            throw new Error(`${key} is required`);
+        }
+    }
+
+    try {
+        // Check if the group exists
+        const group = await Group.findByPk(groupId);
+        if (!group) {
+            throw new Error("Group not found");
+        }
+
+        // Check if the user is a member OR the creator of the group
+        const isMember = await GroupMember.findOne({
+            where: { groupId, userId },
+        });
+        const isCreator = group.createdBy === userId;
+
+        if (!isMember && !isCreator) {
+            throw new Error("You are not a member of the group");
+        }
+
+        return await GroupMessage.create({
+            groupId,
+            senderId: userId,
+            content,
+        });
+    } catch (error) {
+        throw new Error(`Failed to post message: ${error.message}`);
     }
 };

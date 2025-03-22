@@ -21,6 +21,6 @@ const GroupMessage = sequelize.define("GroupMessage", {
     content: { type: DataTypes.TEXT, allowNull: false },
 });
 
-GroupMessage.belongsTo(User, { foreignKey: "senderId", as: "user" });
+GroupMessage.belongsTo(User, { foreignKey: "senderId", as: "sender" });
 
 export default GroupMessage;
