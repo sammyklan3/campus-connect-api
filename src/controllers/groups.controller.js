@@ -4,6 +4,8 @@ import {
     getGroup,
     addMember,
     getMembers,
+    removeMember,
+    getMessages,
 } from "../services/group.service.js";
 
 // Create group
@@ -51,6 +53,26 @@ export const getMembersOfGroup = async (req, res) => {
     try {
         const members = await getMembers(req.params.groupId);
         res.status(200).json({ members });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Remove a member from a group
+export const removeMemberFromGroup = async (req, res) => {
+    try {
+        await removeMember(req.params.groupId, req.params.userId, req.user.id);
+        res.status(200).json({ message: "Member removed from group" });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Get all messages in a group
+export const getMessagesInGroup = async (req, res) => {
+    try {
+        const messages = await getMessages(req.params.groupId, req.user.id);
+        res.status(200).json({ messages });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
