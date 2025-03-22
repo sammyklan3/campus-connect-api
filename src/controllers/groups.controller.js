@@ -3,6 +3,7 @@ import {
     getAllGroups,
     getGroup,
     addMember,
+    getMembers,
 } from "../services/group.service.js";
 
 // Create group
@@ -40,6 +41,16 @@ export const addMemberToGroup = async (req, res) => {
     try {
         await addMember(req.params.groupId, req.body.userId, req.user.id);
         res.status(200).json({ message: "Member added to group" });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Get all members of a group
+export const getMembersOfGroup = async (req, res) => {
+    try {
+        const members = await getMembers(req.params.groupId);
+        res.status(200).json({ members });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

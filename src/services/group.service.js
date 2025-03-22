@@ -100,3 +100,25 @@ export const addMember = async (groupId, userId, id) => {
         throw new Error(`Failed to add member: ${error.message}`);
     }
 };
+
+// Get all members of a group
+export const getMembers = async (groupId) => {
+    try {
+        return await GroupMember.findAll({
+            where: { groupId },
+            include: [
+                {
+                    model: User,
+                    as: "user",
+                    attributes: {
+                        exclude: ["password", "bio", "createdAt", "updatedAt"],
+                    },
+                },
+            ],
+            raw: true,
+            nest: true,
+        });
+    } catch (error) {
+        throw new Error(`Failed to get members: ${error.message}`);
+    }
+};
