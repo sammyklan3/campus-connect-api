@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import User from "./User.js";
 
 const GroupMessage = sequelize.define("GroupMessage", {
     id: {
@@ -18,7 +19,8 @@ const GroupMessage = sequelize.define("GroupMessage", {
         references: { model: "Users", key: "id" },
     },
     content: { type: DataTypes.TEXT, allowNull: false },
-    createdAt: { type: DataTypes.DATE, defaultValue: Sequelize.NOW },
 });
+
+GroupMessage.belongsTo(User, { foreignKey: "senderId", as: "user" });
 
 export default GroupMessage;

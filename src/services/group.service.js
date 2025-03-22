@@ -1,5 +1,6 @@
 import Group from "../models/Group.js";
 import GroupMember from "../models/GroupMember.js";
+import GroupMessage from "../models/GroupMessage.js";
 import User from "../models/User.js";
 
 // Create group
@@ -120,5 +121,95 @@ export const getMembers = async (groupId) => {
         });
     } catch (error) {
         throw new Error(`Failed to get members: ${error.message}`);
+    }
+};
+
+// Remove member from group
+export const removeMember = async (groupId, userId, id) => {
+    const requiredFields = { groupId, userId };
+
+    for (const [key, value] of Object.entries(requiredFields)) {
+        if (!value) {
+            throw new Error(`${key} is required`);
+        }
+    }
+
+    try {
+        const group = await Group.findByPk(groupId);
+        if (!group) {
+            throw new Error("Group not found");
+        }
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        // Fetch all admins of the group
+        const admins = await GroupMember.findAll({
+            where: { groupId, role: "admin" },
+            attributes: ["userId"], // Get only userId column
+        });
+
+        const adminIds = admins.map((admin) => admin.userId); // Convert to an array of IDs
+
+        // Check if the user is the group creator or an admin
+        if (group.createdBy !== id && !adminIds.includes(id)) {
+            throw new Error(
+                "You do not have permission to remove a member from the group"
+            );
+        }
+
+        // Check if the userId is same as the id of the user making the request
+        if (userId === id) {
+            throw new Error("You cannot remove yourself from the group");
+        }
+
+        // Check if the user is not a member of the group
+        const member = await GroupMember.findOne({
+            where: { groupId, userId },
+        });
+        if (!member) {
+            throw new Error("User is not a member of the group");
+        }
+
+        await member.destroy();
+        return group;
+    } catch (error) {
+        throw new Error(`Failed to remove member: ${error.message}`);
+    }
+};
+
+// Get messages of a group
+export const getMessages = async (groupId, userId) => {
+    try {
+        // Check if the group exists
+        const group = await Group.findByPk(groupId);
+        if (!group) {
+            throw new Error("Group not found");
+        }
+
+        // Check if the user is a member of the group
+        const member = await GroupMember.findOne({ where: { groupId, userId } });
+        if (!member) {
+            throw new Error("You are not a member of the group");
+        }
+        
+        return await GroupMessage.findAll({
+            where: { groupId },
+            include: [
+                {
+                    model: User,
+                    as: "sender",
+                    attributes: {
+                        exclude: ["password", "bio", "createdAt", "updatedAt"],
+                    },
+                },
+            ],
+            raw: true,
+            nest: true,
+        });
+    } catch (error) {
+        throw new Error(`Failed to get messages: ${error.message}`);
     }
 };
