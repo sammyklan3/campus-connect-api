@@ -78,7 +78,7 @@ export const loginUser = async ({ email, password }) => {
     });
 };
 
-// Get user details by id 
+// Get user details by id
 export const getUserById = async (id) => {
     return await User.findByPk(id, {
         attributes: { exclude: ["password"] },
