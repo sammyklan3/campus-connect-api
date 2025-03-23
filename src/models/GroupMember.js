@@ -1,6 +1,7 @@
 import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../config/database.js";
 import User from "./User.js";
+import Group from "./Group.js";
 
 const GroupMember = sequelize.define("GroupMember", {
     id: {
@@ -25,5 +26,6 @@ const GroupMember = sequelize.define("GroupMember", {
 });
 
 GroupMember.belongsTo(User, { foreignKey: "userId", as: "user" });
+GroupMember.belongsTo(Group, { foreignKey: "groupId", as: "group" });
 
 export default GroupMember;
