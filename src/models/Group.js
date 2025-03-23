@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
-
+import User from "./User.js";
 const Group = sequelize.define("Group", {
     id: {
         type: DataTypes.UUID,
@@ -18,5 +18,7 @@ const Group = sequelize.define("Group", {
     profilePic: { type: DataTypes.STRING, allowNull: true },
     tags: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: false },
 });
+
+Group.belongsTo(User, { foreignKey: "createdBy", as: "creator" });
 
 export default Group;
